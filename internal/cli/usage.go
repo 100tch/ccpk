@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const usageText = `cc - cc packer
+const usageText = `ccpk - cc packer tool
 
 Usage:
 	ccpk -kind <kind> -in <dir> [options]
@@ -20,7 +20,16 @@ Kinds:
 	animation-variations   AnimationVariations (subdirs = variations)
 
 Examples:
-	TODO
+	ccpk -kind sprite-variations -in ./frames -sheet \
+		-out ./output -name coal -mod-path "__base__/graphics/icons/coal.png" \
+		-lua ./output/coal.lua
+
+
+	ccpk -kind sprite-4way -in ./frames -name pipe
+
+
+	ccpk -kind animation -in ./frames -sheet -out ./output \
+		-name gman-walk -animation-speed 0.5
 
 Options:
 `

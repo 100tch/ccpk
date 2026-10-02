@@ -29,7 +29,7 @@ func Run(args []string) int {
 		return fail(1, err)
 	}
 	// lua
-	if err := writeLua(opts.luaPath, result.LuaSource); err != nil {
+	if err := writeLua(opts.LuaPath, result.LuaSource); err != nil {
 		return fail(1, err)
 	}
 
