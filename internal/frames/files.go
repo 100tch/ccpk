@@ -27,7 +27,7 @@ func ListFiles(dir, pattern string) ([]string, error) {
 		}
 	}
 	if len(files) == 0 {
-		return nil, fmt.Errorf("no frames matching pattern %q in %s", pattern, dir)
+		return nil, fmt.Errorf("[error] no frames matching pattern %q in %s", pattern, dir)
 	}
 
 	sort.SliceStable(files, func(i, j int) bool { return naturalLess(files[i], files[j]) })

@@ -46,15 +46,15 @@ func OrderByDirection(paths []string, want []Direction) ([]string, error) {
 	for i, path := range paths {
 		base, direction, ok := splitDirection(stem(path))
 		if !ok {
-			return nil, fmt.Errorf("file %s has no recognized direction suffix (expected one of -N -NE -E -SE -S -SW -W -NW)", path)
+			return nil, fmt.Errorf("[error] file %s has no recognized direction suffix (expected one of -N -NE -E -SE -S -SW -W -NW)", path)
 		}
 		if i == 0 {
 			commonBase = base
 		} else if base != commonBase {
-			return nil, fmt.Errorf("file %s base name %q does not match other files' base %q — directional frames must share one base name", path, base, commonBase)
+			return nil, fmt.Errorf("[error] file %s base name %q does not match other files' base %q — directional frames must share one base name", path, base, commonBase)
 		}
 		if _, exists := byDirection[direction]; exists {
-			return nil, fmt.Errorf("direction %s has more than one matching file (last: %s)", direction, path)
+			return nil, fmt.Errorf("[error] direction %s has more than one matching file (last: %s)", direction, path)
 		}
 		byDirection[direction] = path
 	}
