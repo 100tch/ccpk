@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 )
@@ -51,22 +52,6 @@ type Config struct {
 	Verbose bool
 }
 
-func KindNames() string {
-	names := make([]string, len(allKinds))
-	for i, kind := range allKinds {
-		names[i] = string(kind)
-	}
-	return strings.Join(names, ",")
-}
-
-func DefaultConfig() Config {
-	return Config{
-		Pattern:        "*.png",
-		AlphaThreshold: 25,
-		Name:           "sprite",
-	}
-}
-
 func (c Config) Validate() error {
 	switch {
 	case c.Kind == "":
@@ -87,6 +72,36 @@ func (c Config) Validate() error {
 		return errors.New("-out is required: each animation variation still needs its own spritesheet PNG")
 	}
 	return nil
+}
+
+func (c Config) luaPath(diskPath string) string {
+	if c.ModPath != "" {
+		return c.ModPath
+	}
+	return filepath.ToSlash(diskPath)
+}
+
+func (c Config) lineLength(sheetColumns int) int {
+	if c.LineLength > 0 {
+		return c.LineLength
+	}
+	return sheetColumns
+}
+
+func KindNames() string {
+	names := make([]string, len(allKinds))
+	for i, kind := range allKinds {
+		names[i] = string(kind)
+	}
+	return strings.Join(names, ",")
+}
+
+func DefaultConfig() Config {
+	return Config{
+		Pattern:        "*.png",
+		AlphaThreshold: 25,
+		Name:           "sprite",
+	}
 }
 
 func isDir(path string) bool {
