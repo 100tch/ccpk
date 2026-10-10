@@ -18,18 +18,14 @@ type Field struct {
 	Sprite Sprite
 }
 
-// Single renders a table holding the sprite's own fields:
-//
-//	name = { filename = ..., width = ..., height = ... }
+// name = { filename = ..., width = ..., height = ... }
 func Single(name string, sprite Sprite) string {
 	var w writer
 	w.sprite(name, sprite)
 	return w.String()
 }
 
-// Sheet renders the sprite under a "sheet" key:
-//
-//	name = { sheet = { filename = ..., ... } }
+// name = { sheet = { filename = ..., ... } }
 func Sheet(name string, sprite Sprite) string {
 	var w writer
 	w.open(name)
@@ -38,9 +34,7 @@ func Sheet(name string, sprite Sprite) string {
 	return w.String()
 }
 
-// List renders an array of sprites:
-//
-//	name = { { filename = ... }, { filename = ... } }
+// name = { { filename = ... }, { filename = ... } }
 func List(name string, sprites []Sprite) string {
 	var w writer
 	w.open(name)
@@ -51,9 +45,7 @@ func List(name string, sprites []Sprite) string {
 	return w.String()
 }
 
-// Keyed renders sprites under their own keys, in the given order:
-//
-//	name = { north = { filename = ... }, east = { filename = ... } }
+// name = { north = { filename = ... }, east = { filename = ... } }
 func Keyed(name string, fields []Field) string {
 	var w writer
 	w.open(name)
