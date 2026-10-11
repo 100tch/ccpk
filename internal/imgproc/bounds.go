@@ -17,7 +17,7 @@ func FullRect(frames []Frame) (image.Rectangle, error) {
 	size := frames[0].Image.Bounds().Size()
 	for _, frame := range frames[1:] {
 		if got := frame.Image.Bounds().Size(); got != size {
-			return image.Rectangle{}, fmt.Errorf("[error] frame %s is %dx%d, expected %dx%d (sizes must match without trimming)",
+			return image.Rectangle{}, fmt.Errorf("frame %s is %dx%d, expected %dx%d (sizes must match without trimming)",
 				frame.Path, got.X, got.Y, size.X, size.Y)
 		}
 	}
