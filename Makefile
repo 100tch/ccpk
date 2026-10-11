@@ -14,13 +14,13 @@ install:
 	install -m 755 $(BUILD_DIR)/$(BINARY) $(PREFIX)/$(BINARY)
 	@echo "installed to $(PREFIX)/$(BINARY)"
 	@case ":$$PATH:" in \
-		*":$(BINDIR):"*) ;; \
-		*) echo "warning: $(BINDIR) is not in your PATH" ;; \
+		*":$(PREFIX):"*) ;; \
+		*) echo "warning: $(PREFIX) is not in your PATH" ;; \
 	esac
 
 uninstall:
 	rm -f $(PREFIX)/$(BINARY)
-	@echo "removed $(PREFIX)/$(BINARY)
+	@echo "removed $(PREFIX)/$(BINARY)"
 
 clean:
 	rm -rf $(BUILD_DIR)

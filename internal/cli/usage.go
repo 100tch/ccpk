@@ -29,7 +29,7 @@ Examples:
 
 
 	ccpk -kind animation -in ./frames -sheet -out ./output \
-		-name gman-walk -animation-speed 0.5
+		-name gman-walk -anim-speed 0.5
 
 Options:
 `

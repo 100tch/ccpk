@@ -11,8 +11,7 @@ import (
 
 func Run(args []string) int {
 	if len(args) == 0 {
-		fmt.Fprintln(os.Stderr, "[error] us -help")
-		return 1
+		return fail(2, errors.New("no arguments, use -help"))
 	}
 
 	opts, err := parseArgs(args)
@@ -52,4 +51,22 @@ func writeLua(path, lua string) error {
 }
 
 func printSummary(opts options, result packer.Result) {
+	if !opts.Verbose {
+		return
+	}
+
+	lua := "stdout"
+	if opts.LuaPath != "" {
+		lua = opts.LuaPath
+	}
+
+	fmt.Fprintln(os.Stderr, "result:")
+	fmt.Fprintf(os.Stderr, " frames %d\n", result.FrameCount)
+	if result.Width > 0 {
+		fmt.Fprintf(os.Stderr, " size %dx%d px\n", result.Width, result.Height)
+	}
+	if result.Sheet != nil {
+		fmt.Fprintf(os.Stderr, " sheet %s (%d columns x %d rows)\n", result.Sheet.Path, result.Sheet.Columns, result.Sheet.Rows)
+	}
+	fmt.Fprintf(os.Stderr, " lua %s\n", lua)
 }
