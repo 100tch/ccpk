@@ -9,9 +9,11 @@ import (
 	"ccpk/internal/packer"
 )
 
+// return error code
 func Run(args []string) int {
 	if len(args) == 0 {
-		return fail(2, errors.New("no arguments, use -help"))
+		fmt.Fprintln(os.Stderr, "[error] ", errors.New("no arguments, use -help"))
+		return 2
 	}
 
 	opts, err := parseArgs(args)
@@ -19,27 +21,25 @@ func Run(args []string) int {
 		return 0
 	}
 	if err != nil {
-		return fail(2, err)
+		fmt.Fprintln(os.Stderr, "[error] ", err)
+		return 2
 	}
 
 	// packing
 	result, err := packer.Pack(opts.Config)
 	if err != nil {
-		return fail(1, err)
+		fmt.Fprintln(os.Stderr, "[error] ", err)
+		return 1
 	}
 	// lua
 	if err := writeLua(opts.LuaPath, result.LuaSource); err != nil {
-		return fail(1, err)
+		fmt.Fprintln(os.Stderr, "[error] ", err)
+		return 1
 	}
 
 	// summary
 	printSummary(opts, result)
 	return 0
-}
-
-func fail(exitCode int, err error) int {
-	fmt.Fprintln(os.Stderr, "[error]", err)
-	return exitCode
 }
 
 func writeLua(path, lua string) error {
