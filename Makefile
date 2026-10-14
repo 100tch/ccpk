@@ -1,17 +1,16 @@
 BINARY := ccpk
 PREFIX := $(HOME)/.local/bin
-BUILD_DIR := build
 
 .PHONY: all build install uninstall clean
 
 all: build
 
 build:
-	go build -o $(BUILD_DIR)/$(BINARY) ./cmd/
+	go build -o $(BINARY) ./cmd/
 
 install:
 	mkdir -p $(PREFIX)
-	install -m 755 $(BUILD_DIR)/$(BINARY) $(PREFIX)/$(BINARY)
+	install -m 755 $(BINARY) $(PREFIX)/$(BINARY)
 	@echo "installed to $(PREFIX)/$(BINARY)"
 	@case ":$$PATH:" in \
 		*":$(PREFIX):"*) ;; \
@@ -23,4 +22,4 @@ uninstall:
 	@echo "removed $(PREFIX)/$(BINARY)"
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm $(BINARY)
