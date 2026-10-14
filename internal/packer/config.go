@@ -6,26 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"strings"
-)
-
-type Kind string
-
-var allKinds []Kind
-
-func regKind(s string) Kind {
-	k := Kind(s)
-	allKinds = append(allKinds, k)
-	return k
-}
-
-var (
-	kindSprite              Kind = regKind("sprite")
-	kindSpriteVariations    Kind = regKind("sprite-variations")
-	kindSprite4Way          Kind = regKind("sprite-4way")
-	kindSprite8Way          Kind = regKind("sprite-8way")
-	kindAnimation           Kind = regKind("animation")
-	kindAnimationVariations Kind = regKind("animation-variations")
 )
 
 type Config struct {
@@ -70,6 +50,8 @@ func (c Config) Validate() error {
 		return errors.New("-out is required when -sheet is set")
 	case c.Kind == kindAnimationVariations && c.OutputDir == "":
 		return errors.New("-out is required: each animation variation still needs its own spritesheet PNG")
+	case !c.NoTrim && !c.writesPNG():
+		return errors.New("trimming needs rewritten PNGs: use -sheet, or pass with -no-trim")
 	}
 	return nil
 }
@@ -88,12 +70,14 @@ func (c Config) lineLength(sheetColumns int) int {
 	return sheetColumns
 }
 
-func KindNames() string {
-	names := make([]string, len(allKinds))
-	for i, kind := range allKinds {
-		names[i] = string(kind)
+func (c Config) writesPNG() bool {
+	switch c.Kind {
+	case kindAnimation, kindAnimationVariations:
+		return true
+	case kindSprite:
+		return false
 	}
-	return strings.Join(names, ",")
+	return c.UseSheet
 }
 
 func DefaultConfig() Config {
