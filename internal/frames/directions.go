@@ -1,6 +1,7 @@
 package frames
 
 import (
+	"ccpk/internal/fsutil"
 	"fmt"
 	"strings"
 )
@@ -44,7 +45,7 @@ func OrderByDirection(paths []string, want []Direction) ([]string, error) {
 	var commonBase string
 
 	for i, path := range paths {
-		base, direction, ok := splitDirection(stem(path))
+		base, direction, ok := splitDirection(fsutil.Stem(path))
 		if !ok {
 			return nil, fmt.Errorf("file %s has no recognized direction suffix (expected one of -N -NE -E -SE -S -SW -W -NW)", path)
 		}
