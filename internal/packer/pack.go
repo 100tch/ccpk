@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"ccpk/internal/frames"
+	"ccpk/internal/fsutil"
 	"ccpk/internal/imgproc"
 	"ccpk/internal/luagen"
 )
@@ -103,7 +104,7 @@ func (s frameSet) result(lua string) Result {
 func writeSheet(cfg Config, name string, cells []*image.RGBA) (SheetFile, error) {
 	sheet := imgproc.BuildSheet(cells, cfg.Columns)
 	path := filepath.Join(cfg.OutputDir, name+".png")
-	if err := imgproc.SavePNG(path, sheet.Image); err != nil {
+	if err := fsutil.SavePNG(path, sheet.Image); err != nil {
 		return SheetFile{}, fmt.Errorf("write sheet png: %w", err)
 	}
 	return SheetFile{Path: path, Columns: sheet.Columns, Rows: sheet.Rows}, nil

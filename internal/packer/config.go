@@ -1,9 +1,10 @@
 package packer
 
 import (
+	"ccpk/internal/fsutil"
 	"errors"
 	"fmt"
-	"os"
+	"path"
 	"path/filepath"
 	"slices"
 )
@@ -40,7 +41,7 @@ func (c Config) Validate() error {
 		return fmt.Errorf("unknown -kind %q (one of %s)", c.Kind, KindNames())
 	case c.InputDir == "":
 		return errors.New("-in is required")
-	case !isDir(c.InputDir):
+	case !fsutil.IsDir(c.InputDir):
 		return fmt.Errorf("-in %q is not a directory", c.InputDir)
 	case c.AlphaThreshold < 0 || c.AlphaThreshold > 255:
 		return fmt.Errorf("-alpha must be between 0 and 255, got %d", c.AlphaThreshold)
@@ -52,15 +53,20 @@ func (c Config) Validate() error {
 		return errors.New("-out is required: each animation variation still needs its own spritesheet PNG")
 	case !c.NoTrim && !c.writesPNG():
 		return errors.New("trimming needs rewritten PNGs: use -sheet, or pass with -no-trim")
+	case fsutil.HasPNGExt(c.ModPath) && c.multiFile():
+		return errors.New("-mod-path is a single file path but this mode references several files")
 	}
 	return nil
 }
 
 func (c Config) luaPath(diskPath string) string {
-	if c.ModPath != "" {
+	switch {
+	case c.ModPath == "":
+		return filepath.ToSlash(diskPath)
+	case fsutil.HasPNGExt(c.ModPath):
 		return c.ModPath
 	}
-	return filepath.ToSlash(diskPath)
+	return path.Join(c.ModPath, filepath.Base(diskPath))
 }
 
 func (c Config) lineLength(sheetColumns int) int {
@@ -80,15 +86,14 @@ func (c Config) writesPNG() bool {
 	return c.UseSheet
 }
 
+func (c Config) multiFile() bool {
+	return c.Kind != kindSprite && c.Kind != kindAnimation && !c.UseSheet
+}
+
 func DefaultConfig() Config {
 	return Config{
 		Pattern:        "*.png",
 		AlphaThreshold: 25,
 		Name:           "sprite",
 	}
-}
-
-func isDir(path string) bool {
-	info, err := os.Stat(path)
-	return err == nil && info.IsDir()
 }
