@@ -4,13 +4,18 @@ import (
 	"fmt"
 
 	"ccpk/internal/frames"
+	"ccpk/internal/fsutil"
 	"ccpk/internal/luagen"
 )
 
 func packSprite(cfg Config) (Result, error) {
-	paths, err := frames.ListFiles(cfg.InputDir, cfg.Pattern)
-	if err != nil {
-		return Result{}, err
+	paths := []string{cfg.Input}
+	if fsutil.IsDir(cfg.Input) {
+		var err error
+		paths, err = frames.ListFiles(cfg.Input, cfg.Pattern)
+		if err != nil {
+			return Result{}, err
+		}
 	}
 	if len(paths) != 1 {
 		return Result{}, fmt.Errorf("-kind sprite expects exactly one matching image, found %d (use sprite-variations for multiple)", len(paths))
@@ -25,7 +30,7 @@ func packSprite(cfg Config) (Result, error) {
 }
 
 func packSpriteVariations(cfg Config) (Result, error) {
-	set, err := loadDir(cfg, cfg.InputDir)
+	set, err := loadDir(cfg, cfg.Input)
 	if err != nil {
 		return Result{}, err
 	}
@@ -41,7 +46,7 @@ func packSpriteVariations(cfg Config) (Result, error) {
 }
 
 func packDirectional(cfg Config, directions []frames.Direction) (Result, error) {
-	all, err := frames.ListFiles(cfg.InputDir, cfg.Pattern)
+	all, err := frames.ListFiles(cfg.Input, cfg.Pattern)
 	if err != nil {
 		return Result{}, err
 	}

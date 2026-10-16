@@ -9,7 +9,7 @@ import (
 )
 
 func packAnimation(cfg Config) (Result, error) {
-	set, err := loadDir(cfg, cfg.InputDir)
+	set, err := loadDir(cfg, cfg.Input)
 	if err != nil {
 		return Result{}, err
 	}
@@ -25,12 +25,12 @@ func packAnimation(cfg Config) (Result, error) {
 }
 
 func packAnimationVariations(cfg Config) (Result, error) {
-	dirs, err := frames.ListSubdirs(cfg.InputDir)
+	dirs, err := frames.ListSubdirs(cfg.Input)
 	if err != nil {
 		return Result{}, err
 	}
 	if len(dirs) == 0 {
-		return Result{}, fmt.Errorf("no variation subdirectories found in %s", cfg.InputDir)
+		return Result{}, fmt.Errorf("no variation subdirectories found in %s", cfg.Input)
 	}
 
 	variations := make([]frameSet, len(dirs))

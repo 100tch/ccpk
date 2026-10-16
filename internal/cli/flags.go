@@ -44,8 +44,12 @@ func parseArgs(args []string) (options, error) {
 		tw.Flush()
 	}
 
-	if fls.NArg() > 0 {
-		return opts, fmt.Errorf("unexpected argument %q (all options must start with \"-\" and come before it)", fls.Arg(0))
+	switch fls.NArg() {
+	case 0:
+	case 1:
+		opts.Input = fls.Arg(0)
+	default:
+		return opts, fmt.Errorf("expected one input path, got %d: %q (all options must start with \"-\" and come before path)", fls.NArg(), fls.Args())
 	}
 
 	return opts, opts.Validate()
@@ -60,7 +64,6 @@ func displayValue(v string) string {
 
 func defineFlags(fls *flag.FlagSet, opts *options) {
 	fls.StringVar((*string)(&opts.Kind), "kind", "", "output shape: one of"+packer.KindNames())
-	fls.StringVar(&opts.InputDir, "in", "", "input directory containing source frames (required)")
 	fls.StringVar(&opts.Pattern, "pattern", opts.Pattern, "glob pattern for source files within -in")
 	fls.BoolVar(&opts.NoTrim, "no-trim", false, "don't trim frames to their alpha bounding box")
 	fls.IntVar(&opts.AlphaThreshold, "alpha", opts.AlphaThreshold, "alpha value (0-255) at or above which a pixel counts as opaque for trimming")

@@ -9,7 +9,7 @@ import (
 const usageText = `ccpk - cc packer tool
 
 Usage:
-	ccpk -kind <kind> -in <dir> [options]
+	ccpk -kind <kind> [options] <input>
 
 Kinds:
 	sprite                 Sprite (exactly one source image)
@@ -20,16 +20,16 @@ Kinds:
 	animation-variations   AnimationVariations (subdirs = variations)
 
 Examples:
-	ccpk -kind sprite-variations -in ./frames -sheet \
-		-out ./output -name coal -mod-path "__base__/graphics/icons/coal.png" \
-		-lua ./output/coal.lua
+	ccpk -kind sprite-variations -sheet -out ./output \
+		-name coal -mod-path "__base__/graphics/icons/coal.png" \
+		-lua ./output/coal.lua ./frames/
 
 
-	ccpk -kind sprite-4way -in ./frames -name pipe -no-trim
+	ccpk -kind sprite-4way -name pipe -no-trim ./frames/
 
 
-	ccpk -kind animation -in ./frames -sheet -out ./output \
-		-name gman-walk -anim-speed 0.5
+	ccpk -kind animation -sheet -out ./output \
+		-name gman-walk -anim-speed 0.5 ./frames/
 
 Options:
 `

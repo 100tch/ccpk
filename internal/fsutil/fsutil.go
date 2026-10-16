@@ -17,6 +17,11 @@ func IsDir(path string) bool {
 	return err == nil && info.IsDir()
 }
 
+func Exists(p string) bool {
+	_, err := os.Stat(p)
+	return err == nil
+}
+
 func HasPNGExt(p string) bool {
 	return strings.EqualFold(path.Ext(p), ".png")
 }

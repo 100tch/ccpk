@@ -1,18 +1,19 @@
 package packer
 
 import (
-	"ccpk/internal/fsutil"
 	"errors"
 	"fmt"
 	"path"
 	"path/filepath"
 	"slices"
+
+	"ccpk/internal/fsutil"
 )
 
 type Config struct {
-	Kind     Kind
-	InputDir string
-	Pattern  string
+	Kind    Kind
+	Input   string
+	Pattern string
 
 	// trimming
 	NoTrim         bool
@@ -39,10 +40,12 @@ func (c Config) Validate() error {
 		return fmt.Errorf("-kind is required (one of %s)", KindNames())
 	case !slices.Contains(allKinds, c.Kind):
 		return fmt.Errorf("unknown -kind %q (one of %s)", c.Kind, KindNames())
-	case c.InputDir == "":
-		return errors.New("-in is required")
-	case !fsutil.IsDir(c.InputDir):
-		return fmt.Errorf("-in %q is not a directory", c.InputDir)
+	case c.Input == "":
+		return errors.New("input path is required")
+	case !fsutil.Exists(c.Input):
+		return fmt.Errorf("input %q does not exist", c.Input)
+	case c.Kind != kindSprite && !fsutil.IsDir(c.Input):
+		return fmt.Errorf("-kind %s needs a directory of frames, got a file: %q", c.Kind, c.Input)
 	case c.AlphaThreshold < 0 || c.AlphaThreshold > 255:
 		return fmt.Errorf("-alpha must be between 0 and 255, got %d", c.AlphaThreshold)
 	case c.Kind == kindAnimation && !c.UseSheet:
