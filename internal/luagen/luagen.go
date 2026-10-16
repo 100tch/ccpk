@@ -20,6 +20,7 @@ type Field struct {
 
 // name = { filename = ..., width = ..., height = ... }
 func Single(name string, sprite Sprite) string {
+	name = identifier(name)
 	var w writer
 	w.sprite(name, sprite)
 	return w.String()
@@ -27,6 +28,7 @@ func Single(name string, sprite Sprite) string {
 
 // name = { sheet = { filename = ..., ... } }
 func Sheet(name string, sprite Sprite) string {
+	name = identifier(name)
 	var w writer
 	w.open(name)
 	w.sprite("sheet", sprite)
@@ -36,6 +38,7 @@ func Sheet(name string, sprite Sprite) string {
 
 // name = { { filename = ... }, { filename = ... } }
 func List(name string, sprites []Sprite) string {
+	name = identifier(name)
 	var w writer
 	w.open(name)
 	for _, sprite := range sprites {
@@ -47,6 +50,7 @@ func List(name string, sprites []Sprite) string {
 
 // name = { north = { filename = ... }, east = { filename = ... } }
 func Keyed(name string, fields []Field) string {
+	name = identifier(name)
 	var w writer
 	w.open(name)
 	for _, field := range fields {
