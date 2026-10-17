@@ -32,6 +32,7 @@ type Config struct {
 	LineLength     int
 	AnimationSpeed float64
 
+	Force   bool
 	Verbose bool
 }
 
@@ -57,8 +58,10 @@ func (c Config) Validate() error {
 		return errors.New("-out is required when -sheet is set")
 	case c.Kind == kindAnimationVariations && c.OutputDir == "":
 		return errors.New("-out is required: each animation variation still needs its own spritesheet PNG")
-	case c.Trim && !c.writesPNG():
-		return errors.New("trimming needs rewritten PNGs: use -sheet")
+	case c.Trim && c.OutputDir == "":
+		return errors.New("-out is required with -trim")
+	case c.outputInsideInput():
+		return fmt.Errorf("-out %q must not be where the source files", c.OutputDir)
 	case c.Padding != 0 && !c.Trim:
 		return errors.New("-padding only applies together with -trim")
 	case fsutil.HasPNGExt(c.ModPath) && c.multiFile():
@@ -84,14 +87,14 @@ func (c Config) lineLength(sheetColumns int) int {
 	return sheetColumns
 }
 
-func (c Config) writesPNG() bool {
-	switch c.Kind {
-	case kindAnimation, kindAnimationVariations:
-		return true
-	case kindSprite:
+func (c Config) outputInsideInput() bool {
+	if c.OutputDir == "" {
 		return false
 	}
-	return c.UseSheet
+	if fsutil.IsDir(c.Input) {
+		return fsutil.Inside(c.Input, c.OutputDir)
+	}
+	return fsutil.SamePath(filepath.Dir(c.Input), c.OutputDir)
 }
 
 func (c Config) multiFile() bool {

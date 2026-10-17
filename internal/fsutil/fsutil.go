@@ -1,9 +1,11 @@
 package fsutil
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"image/png"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,14 +28,15 @@ func HasPNGExt(p string) bool {
 	return strings.EqualFold(path.Ext(p), ".png")
 }
 
-func SavePNG(path string, img image.Image) error {
-	file, err := os.Create(path)
+func SavePNG(path string, img image.Image, overwrite bool) error {
+	file, err := Create(path, overwrite)
 	if err != nil {
-		return fmt.Errorf("create %s: %w", path, err)
+		return err
 	}
 
 	if err := png.Encode(file, img); err != nil {
 		file.Close()
+		os.Remove(path)
 		return fmt.Errorf("encode %s: %w", path, err)
 	}
 
@@ -41,6 +44,48 @@ func SavePNG(path string, img image.Image) error {
 		return fmt.Errorf("close %s: %w", path, err)
 	}
 	return nil
+}
+
+func Create(path string, overwrite bool) (*os.File, error) {
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return nil, err
+	}
+
+	flags := os.O_WRONLY | os.O_CREATE
+	if overwrite {
+		flags |= os.O_TRUNC
+	} else {
+		flags |= os.O_EXCL
+	}
+
+	file, err := os.OpenFile(path, flags, 0o644)
+	if errors.Is(err, fs.ErrExist) {
+		return nil, fmt.Errorf("%s already exists (use -force to overwrite)", path)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("create %s: %w", path, err)
+	}
+
+	return file, nil
+}
+
+func SamePath(a, b string) bool {
+	absA, errA := filepath.Abs(a)
+	absB, errB := filepath.Abs(b)
+	return errA == nil && errB == nil && absA == absB
+}
+
+func Inside(parent, child string) bool {
+	absParent, errP := filepath.Abs(parent)
+	absChild, errC := filepath.Abs(child)
+	if errP != nil || errC != nil {
+		return false
+	}
+	rel, err := filepath.Rel(absParent, absChild)
+	if err != nil {
+		return false
+	}
+	return rel == "." || (rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)))
 }
 
 // filename without directory and extension

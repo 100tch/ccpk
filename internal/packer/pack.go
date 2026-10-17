@@ -101,10 +101,30 @@ func (s frameSet) result(lua string) Result {
 	}
 }
 
+func (s frameSet) files(cfg Config) ([]string, error) {
+	paths := make([]string, len(s.frames))
+	if !cfg.Trim {
+		for i, frame := range s.frames {
+			paths[i] = frame.Path
+		}
+		return paths, nil
+	}
+
+	cells := s.cells()
+	for i, frame := range s.frames {
+		path := filepath.Join(cfg.OutputDir, filepath.Base(frame.Path))
+		if err := fsutil.SavePNG(path, cells[i], cfg.Force); err != nil {
+			return nil, fmt.Errorf("write frame png: %w", err)
+		}
+		paths[i] = path
+	}
+	return paths, nil
+}
+
 func writeSheet(cfg Config, name string, cells []*image.RGBA) (SheetFile, error) {
 	sheet := imgproc.BuildSheet(cells, cfg.Columns)
 	path := filepath.Join(cfg.OutputDir, name+".png")
-	if err := fsutil.SavePNG(path, sheet.Image); err != nil {
+	if err := fsutil.SavePNG(path, sheet.Image, cfg.Force); err != nil {
 		return SheetFile{}, fmt.Errorf("write sheet png: %w", err)
 	}
 	return SheetFile{Path: path, Columns: sheet.Columns, Rows: sheet.Rows}, nil

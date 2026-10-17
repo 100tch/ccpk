@@ -25,7 +25,11 @@ func packSprite(cfg Config) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	sprite := set.sprite(cfg.luaPath(paths[0]))
+	files, err := set.files(cfg)
+	if err != nil {
+		return Result{}, err
+	}
+	sprite := set.sprite(cfg.luaPath(files[0]))
 	return set.result(luagen.Single(cfg.Name, sprite)), nil
 }
 
@@ -38,9 +42,13 @@ func packSpriteVariations(cfg Config) (Result, error) {
 		return packAsVariationSheet(cfg, set)
 	}
 
-	sprites := make([]luagen.Sprite, len(set.frames))
-	for i, frame := range set.frames {
-		sprites[i] = set.sprite(cfg.luaPath(frame.Path))
+	files, err := set.files(cfg)
+	if err != nil {
+		return Result{}, err
+	}
+	sprites := make([]luagen.Sprite, len(files))
+	for i, file := range files {
+		sprites[i] = set.sprite(cfg.luaPath(file))
 	}
 	return set.result(luagen.List(cfg.Name, sprites)), nil
 }
@@ -64,11 +72,15 @@ func packDirectional(cfg Config, directions []frames.Direction) (Result, error) 
 		return packAsVariationSheet(cfg, set)
 	}
 
+	files, err := set.files(cfg)
+	if err != nil {
+		return Result{}, err
+	}
 	fields := make([]luagen.Field, len(directions))
 	for i, direction := range directions {
 		fields[i] = luagen.Field{
 			Key:    string(direction),
-			Sprite: set.sprite(cfg.luaPath(paths[i])),
+			Sprite: set.sprite(cfg.luaPath(files[i])),
 		}
 	}
 	return set.result(luagen.Keyed(cfg.Name, fields)), nil

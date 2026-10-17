@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	"ccpk/internal/fsutil"
 	"ccpk/internal/packer"
 )
 
@@ -32,7 +33,7 @@ func Run(args []string) int {
 		return 1
 	}
 	// lua
-	if err := writeLua(opts.LuaPath, result.LuaSource); err != nil {
+	if err := writeLua(opts.LuaPath, result.LuaSource, opts.Force); err != nil {
 		fmt.Fprintln(os.Stderr, "[error] ", err)
 		return 1
 	}
@@ -42,12 +43,20 @@ func Run(args []string) int {
 	return 0
 }
 
-func writeLua(path, lua string) error {
+func writeLua(path, lua string, overwrite bool) error {
 	if path == "" {
 		_, err := fmt.Print(lua)
 		return err
 	}
-	return os.WriteFile(path, []byte(lua), 0o644)
+	file, err := fsutil.Create(path, overwrite)
+	if err != nil {
+		return err
+	}
+	if _, err := file.WriteString(lua); err != nil {
+		file.Close()
+		return err
+	}
+	return file.Close()
 }
 
 func printSummary(opts options, result packer.Result) {

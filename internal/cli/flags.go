@@ -76,5 +76,6 @@ func defineFlags(fls *flag.FlagSet, opts *options) {
 	fls.IntVar(&opts.LineLength, "line-length", opts.LineLength, "line_length written into the Lua (0 = auto)")
 	fls.Float64Var(&opts.AnimationSpeed, "anim-speed", opts.AnimationSpeed, "animation_speed for -kind animation/animation-variations (0 = omit, default 1)")
 	fls.StringVar(&opts.LuaPath, "lua", "", "write the generated Lua to this file instead of stdout")
+	fls.BoolVar(&opts.Force, "force", false, "overwrite existing output files")
 	fls.BoolVar(&opts.Verbose, "v", false, "print debug info to stderr")
 }
