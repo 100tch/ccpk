@@ -64,8 +64,8 @@ func displayValue(v string) string {
 
 func defineFlags(fls *flag.FlagSet, opts *options) {
 	fls.StringVar((*string)(&opts.Kind), "kind", "", "output shape: one of"+packer.KindNames())
-	fls.StringVar(&opts.Pattern, "pattern", opts.Pattern, "glob pattern for source files within -in")
-	fls.BoolVar(&opts.NoTrim, "no-trim", false, "don't trim frames to their alpha bounding box")
+	fls.StringVar(&opts.Pattern, "pattern", opts.Pattern, "glob pattern for source files")
+	fls.BoolVar(&opts.Trim, "trim", false, "trim frames to their alpha bounding box")
 	fls.IntVar(&opts.AlphaThreshold, "alpha", opts.AlphaThreshold, "alpha value (0-255) at or above which a pixel counts as opaque for trimming")
 	fls.IntVar(&opts.Padding, "padding", opts.Padding, "transparent padding (px) to keep around the trimmed bbox")
 	fls.BoolVar(&opts.UseSheet, "sheet", false, "pack frames into one spritesheet PNG instead of an array of separate Sprite/Animation entries")

@@ -56,10 +56,10 @@ func loadFrames(cfg Config, paths []string) (frameSet, error) {
 	}
 
 	var crop image.Rectangle
-	if cfg.NoTrim {
-		crop, err = imgproc.FullRect(loaded)
-	} else {
+	if cfg.Trim {
 		crop, err = imgproc.TrimRect(loaded, cfg.AlphaThreshold, cfg.Padding, debugOutput(cfg))
+	} else {
+		crop, err = imgproc.FullRect(loaded)
 	}
 	if err != nil {
 		return frameSet{}, err

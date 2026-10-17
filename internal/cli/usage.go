@@ -25,7 +25,7 @@ Examples:
 		-lua ./output/coal.lua ./frames/
 
 
-	ccpk -kind sprite-4way -name pipe -no-trim ./frames/
+	ccpk -kind sprite-4way -name pipe -trim ./frames/
 
 
 	ccpk -kind animation -sheet -out ./output \

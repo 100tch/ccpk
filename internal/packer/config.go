@@ -17,7 +17,7 @@ type Config struct {
 	Pattern string
 
 	// trimming
-	NoTrim         bool
+	Trim           bool
 	AlphaThreshold int
 	Padding        int
 
@@ -57,8 +57,10 @@ func (c Config) Validate() error {
 		return errors.New("-out is required when -sheet is set")
 	case c.Kind == kindAnimationVariations && c.OutputDir == "":
 		return errors.New("-out is required: each animation variation still needs its own spritesheet PNG")
-	case !c.NoTrim && !c.writesPNG():
-		return errors.New("trimming needs rewritten PNGs: use -sheet, or pass with -no-trim")
+	case c.Trim && !c.writesPNG():
+		return errors.New("trimming needs rewritten PNGs: use -sheet")
+	case c.Padding != 0 && !c.Trim:
+		return errors.New("-padding only applies together with -trim")
 	case fsutil.HasPNGExt(c.ModPath) && c.multiFile():
 		return errors.New("-mod-path is a single file path but this mode references several files")
 	}
