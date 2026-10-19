@@ -41,12 +41,7 @@ func TrimRect(frames []Frame, threshold, padding int, debug io.Writer) (image.Re
 		return image.Rectangle{}, errors.New("no non-transparent pixels found in any frame")
 	}
 
-	return image.Rect(
-		max(visible.Min.X-padding, 0),
-		max(visible.Min.Y-padding, 0),
-		visible.Max.X+padding,
-		visible.Max.Y+padding,
-	), nil
+	return visible.Inset(-padding), nil
 }
 
 func Crop(frames []Frame, rect image.Rectangle) []*image.RGBA {
