@@ -22,4 +22,4 @@ uninstall:
 	@echo "removed $(PREFIX)/$(BINARY)"
 
 clean:
-	rm $(BINARY)
+	rm -f $(BINARY)

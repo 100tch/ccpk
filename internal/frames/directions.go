@@ -78,13 +78,14 @@ func OrderByDirection(paths []string, want []Direction) ([]string, error) {
 // splits filename with prefix into the base name and direction
 // ok is false if there is no known direction suffix
 func splitDirection(name string) (base string, direction Direction, ok bool) {
-	dash := strings.LastIndex(name, "-")
-	if dash == -1 {
+	base, after, found := strings.CutLast(name, "-")
+	if !found {
 		return name, "", false
 	}
-	direction, ok = fileSuffixes[strings.ToUpper(name[dash+1:])]
+	direction, ok = fileSuffixes[strings.ToUpper(after)]
+
 	if !ok {
 		return name, "", false
 	}
-	return name[:dash], direction, true
+	return base, direction, true
 }
