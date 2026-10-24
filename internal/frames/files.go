@@ -1,11 +1,12 @@
 package frames
 
 import (
-	"ccpk/internal/fsutil"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
+
+	"ccpk/internal/fsutil"
 )
 
 // returns files in directory whose names match the glob pattern in natural order
