@@ -39,21 +39,21 @@ type Config struct {
 func (c Config) Validate() error {
 	switch {
 	case c.Kind == "":
-		return fmt.Errorf("-kind is required (one of %s)", KindNames())
+		return fmt.Errorf("kind is required (one of %s)", KindNames())
 	case !slices.Contains(allKinds, c.Kind):
-		return fmt.Errorf("unknown -kind %q (one of %s)", c.Kind, KindNames())
+		return fmt.Errorf("unknown kind %q (one of %s)", c.Kind, KindNames())
 	case c.Input == "":
 		return errors.New("input path is required")
 	case !fsutil.Exists(c.Input):
 		return fmt.Errorf("input %q does not exist", c.Input)
 	case c.Kind != kindSprite && !fsutil.IsDir(c.Input):
-		return fmt.Errorf("-kind %s needs a directory of frames, got a file: %q", c.Kind, c.Input)
+		return fmt.Errorf("kind %s needs a directory of frames, got a file: %q", c.Kind, c.Input)
 	case c.Name == "" || c.Name == "." || c.Name == ".." || strings.ContainsAny(c.Name, `/\`):
 		return fmt.Errorf("-name %q must be a plain name without directories", c.Name)
 	case c.AlphaThreshold < 0 || c.AlphaThreshold > 255:
 		return fmt.Errorf("-alpha must be between 0 and 255, got %d", c.AlphaThreshold)
 	case c.Kind == kindAnimation && !c.UseSheet:
-		return errors.New("-kind animation requires -sheet (a single spritesheet file walked by frame_count)")
+		return errors.New("kind animation requires -sheet (a single spritesheet file walked by frame_count)")
 	case c.UseSheet && c.OutputDir == "":
 		return errors.New("-out is required when -sheet is set")
 	case c.Kind == kindAnimationVariations && c.OutputDir == "":

@@ -18,7 +18,7 @@ func packSprite(cfg Config) (Result, error) {
 		}
 	}
 	if len(paths) != 1 {
-		return Result{}, fmt.Errorf("-kind sprite expects exactly one matching image, found %d (use sprite-variations for multiple)", len(paths))
+		return Result{}, fmt.Errorf("kind sprite expects exactly one matching image, found %d (use sprite-variations for multiple)", len(paths))
 	}
 
 	set, err := loadFrames(cfg, paths)
